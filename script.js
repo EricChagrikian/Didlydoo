@@ -13,10 +13,14 @@
 // getEvents()
 
 
- async function loadDatesIntoHead(url) {
-     const response = await fetch(url);
+ async function loadDatesIntoHead() {
+     const response = await fetch('http://localhost:3000/api/events/');
      const info = await response.json();
      console.log(info);
+
+     const response2 = await fetch('http://localhost:3000/api/attendees/');
+     const attendees = await response2.json();
+     console.log(attendees);
 
      for (let i = 0; i < info.length; i++) {
         let events = document.createElement("section");
@@ -33,7 +37,7 @@
 
         let h4 = document.createElement('h4');
         events.appendChild(h4);
-        h4.innerHTML = info[i].author;
+        h4.innerHTML = "-" + info[i].author;
 
         let tableEvents = document.createElement('table');
         events.appendChild(tableEvents);
@@ -45,18 +49,71 @@
         let blankForNames = document.createElement('th');
         rowForHead.appendChild(blankForNames);
         blankForNames.innerHTML = "Attendees";
-        
-        for (const {date} of tablesDate) {
-            console.log(date)
-            let tableHeader = document.createElement('th');
-            rowForHead.appendChild(tableHeader);
-            tableHeader.innerHTML= date;
-        } 
+
+
+
+        let tableBody = document.createElement('tbody');
+        tableEvents.appendChild(tableBody);
+
+        let tableInput = document.createElement('tr')
+        tableBody.appendChild(tableInput)
+
+        let tableInputUserName = document.createElement('td')
+        tableInput.appendChild(tableInputUserName)
+        let inputForUserName = document.createElement('input')
+        inputForUserName.className = "newName"
+        tableInputUserName.appendChild(inputForUserName)
+
+
+
+
+        for (let j = 0; j < info[i].dates[0].attendees.length; j++) {
+            let tableRowAttendees = document.createElement('tr');
+            let td = document.createElement('td');
+            tableBody.appendChild(tableRowAttendees);
+            tableRowAttendees.appendChild(td)
+
+            td.innerText=info[i].dates[0].attendees[j].name;
+            let tablesAvailable = info[i].dates[0].attendees;    
+            
+            
+
+
+            for (const {date} of tablesDate) {
+                console.log(date)
+                let tableHeader = document.createElement('th');
+                rowForHead.appendChild(tableHeader);
+                tableHeader.innerHTML= date;
+                for (const {available} of tablesAvailable) {
+                    console.log(available)
+                    let tableAttendees = document.createElement('td')
+                    tableRowAttendees.appendChild(tableAttendees)
+                    tableAttendees.innerHTML = available;
+                    
+
+                }
+
+                let tableInputUser = document.createElement('td')
+                tableInput.appendChild(tableInputUser)
+                let inputForUser = document.createElement('input')
+                inputForUser.className = "newAvailability"
+                tableInputUser.appendChild(inputForUser)
+                
+            } 
+
+        }
+
+
     };
+
+
 }
 
-// async function loadNamesIntoBody(url, table) {
-//     const tableBody = table.querySelector('tbody');
+// async function loadNamesIntoBody(url) {
+//      let selectTable = document.queryselector('table');
+//      let tableBody = document.createElement('tbody');
+//      selectTable.appendChild(tableBody);
+//      
 //      const response = await fetch(url);
 //      const info = await response.json();
 
@@ -96,8 +153,6 @@
 // }
 
 // loadIntoTable("http://localhost:3000/", document.querySelector('table'));
-loadDatesIntoHead("http://localhost:3000/api/events/", document.querySelector('table'));
-loadNamesIntoBody("http://localhost:3000/api/attendees/", document.querySelector('table'));
-
+loadDatesIntoHead();
 
 
